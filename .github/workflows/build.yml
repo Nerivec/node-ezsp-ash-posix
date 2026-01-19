@@ -1,0 +1,145 @@
+name: Build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prebuild:
+    strategy:
+      matrix:
+        include:
+          - name: linux-x64
+            os: ubuntu-latest
+            command: prebuildify-cross
+            args: -i almalinux-devtoolset11 --tag-libc --libc glibc
+
+          # - name: linux-x64-musl
+          #   os: ubuntu-latest
+          #   command: prebuildify-cross
+          #   args: -i alpine --tag-libc --libc musl
+
+          # - name: linux-arm64
+          #   os: ubuntu-latest
+          #   command: prebuildify-cross
+          #   args: -i linux-arm64 --tag-libc --libc glibc
+
+          # - name: linux-arm64-musl
+          #   os: ubuntu-latest
+          #   command: prebuildify-cross
+          #   args: -i linux-arm64-musl --tag-libc --libc musl
+
+          # - name: linux-arm
+          #   os: ubuntu-latest
+          #   command: prebuildify-cross
+          #   args: -i linux-armv7 -i linux-armv6 --tag-libc --libc glibc
+
+          # - name: linux-arm-musl
+          #   os: ubuntu-latest
+          #   command: prebuildify-cross
+          #   args: -i linux-armv7l-musl --tag-libc --libc musl
+
+          # - name: darwin
+          #   os: macos-latest
+          #   command: prebuildify
+          #   args: --arch x64+arm64
+
+          # - name: win32-x64
+          #   os: windows-latest
+          #   command: prebuildify
+
+          # - name: win32-arm64
+          #   os: windows-latest
+          #   command: prebuildify
+          #   args: --arch arm64 --tag-armv 8
+
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Checkout Simplicity SDK
+        uses: actions/checkout@v6
+        with:
+          repository: SiliconLabs/simplicity_sdk
+          ref: v2025.6.2
+          path: simplicity_sdk
+          sparse-checkout: |
+            protocol/zigbee/app
+            protocol/zigbee/stack
+            platform/service/legacy_common_ash
+            platform/service/legacy_hal
+            platform/common/inc
+            platform/radio/mac
+            util/silicon_labs/silabs_core
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build binding
+        run: |
+          npm run apply-patches
+          npm run ${{ matrix.command }} -- --target 20.0.0 ${{ matrix.args }}
+          npm run revert-patches
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: build-artifacts-${{ matrix.name }}
+          path: prebuilds/
+          if-no-files-found: error
+
+  release:
+    name: Release
+    if: github.event_name == 'release'
+    needs: [prebuild]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: build-artifacts-*
+          merge-multiple: true
+          path: prebuilds
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Update NPM
+        run: npm install -g npm@latest
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build:ts
+
+      - run: ls -ahl
+      - run: ls -ahl dist
+      - run: ls -ahl prebuilds
+
+      # - name: Publish to NPM
+      #   run: npm publish --provenance --access public

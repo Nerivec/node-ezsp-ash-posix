@@ -1,0 +1,69 @@
+{
+    "name": "node-ezsp-ash-posix",
+    "version": "0.1.0",
+    "description": "Node.js N-API bindings for Silicon Labs EmberZNet Serial Protocol (EZSP) and Asynchronous Serial Host (ASH) protocols of Simplicity SDK",
+    "author": "Nerivec",
+    "license": "GPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nerivec/node-ezsp-ash-posix.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Nerivec/node-ezsp-ash-posix/issues"
+    },
+    "homepage": "https://github.com/Nerivec/node-ezsp-ash-posix#readme",
+    "keywords": [
+        "zigbee",
+        "silabs",
+        "emberznet",
+        "ember",
+        "ezsp",
+        "ash",
+        "node-api",
+        "napi",
+        "node-native"
+    ],
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "check": "biome check --write .",
+        "check:ci": "biome check .",
+        "clean": "rm -rf dist build prebuilds coverage",
+        "apply-patches": "tsx scripts/patches.ts patch",
+        "revert-patches": "tsx scripts/patches.ts revert",
+        "build:gyp": "npm run apply-patches && node-gyp rebuild && npm run revert-patches",
+        "build:pre": "npm run apply-patches && npm run prebuildify -- --target 24.0.0 && npm run revert-patches",
+        "build:prex": "npm run apply-patches && prebuildify-cross -- --target 24.0.0 && npm run revert-patches",
+        "build:ts": "tsc",
+        "prebuildify": "prebuildify --napi --force --strip --verbose",
+        "prebuildify-cross": "prebuildify-cross --napi --force --strip --verbose",
+        "test": "vitest run --config ./test/vitest.config.mts",
+        "test:cov": "vitest run --config ./test/vitest.config.mts --coverage",
+        "bench": "vitest bench --run --config ./test/vitest.config.mts"
+    },
+    "dependencies": {
+        "node-addon-api": "^8.5.0",
+        "node-gyp-build": "^4.8.4"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.3.11",
+        "@types/node": "^24.10.9",
+        "@vitest/coverage-v8": "^4.0.17",
+        "node-gyp": "^12.1.0",
+        "prebuildify": "^6.0.1",
+        "prebuildify-cross": "^5.1.1",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3",
+        "vitest": "^4.0.17"
+    },
+    "gypfile": false,
+    "files": [
+        "dist",
+        "prebuilds",
+        "binding.gyp"
+    ]
+}
