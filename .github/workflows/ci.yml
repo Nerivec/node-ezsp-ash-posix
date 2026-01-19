@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - uses: actions/checkout@v6
+
+      - name: Sparse-checkout nested Simplicity SDK
+        uses: actions/checkout@v6
+        with:
+          repository: SiliconLabs/simplicity_sdk
+          ref: v2025.6.2
+          path: simplicity_sdk
+          sparse-checkout: |
+            protocol/zigbee/app
+            protocol/zigbee/stack
+            platform/service/legacy_common_ash
+            platform/service/legacy_hal
+            platform/common/inc
+            platform/radio/mac
+            util/silicon_labs/silabs_core
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Biome
+        run: npm run check:ci
+
+      - name: Build binding
+        run: npm run build:gyp
+
+      - name: Build TypeScript
+        run: npm run build:ts
+
+      - name: Run tests with coverage
+        run: npm run test:cov

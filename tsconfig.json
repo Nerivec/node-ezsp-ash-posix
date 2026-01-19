@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": ["ESNext"],
+        "module": "NodeNext",
+        "types": ["node"],
+        "skipLibCheck": false,
+
+        "moduleResolution": "NodeNext",
+        "verbatimModuleSyntax": true,
+        "moduleDetection": "force",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+
+        "rootDir": "./src",
+        "outDir": "./dist",
+
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+
+        "strict": true,
+        "noUnusedLocals": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedSideEffectImports": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist", "test", "src/native"]
+}

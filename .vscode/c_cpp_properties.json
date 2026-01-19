@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "gcc-node",
+            "includePath": [
+                "${workspaceFolder}/node_modules/node-addon-api",
+                "${HOME}/.nvm/versions/node/v24*/include/node",
+                "${HOME}/.nvm/versions/node/v22*/include/node",
+                "${HOME}/.nvm/versions/node/v20*/include/node",
+                "${workspaceFolder}/src/native/stubs",
+                "${workspaceFolder}/simplicity_sdk",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/app/util/ezsp",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/app/ezsp-host",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/app/ezsp-host/ash",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/stack/include",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/stack/config",
+                "${workspaceFolder}/simplicity_sdk/protocol/zigbee/stack/platform/host",
+                "${workspaceFolder}/simplicity_sdk/platform/service/legacy_common_ash/inc",
+                "${workspaceFolder}/simplicity_sdk/platform/service/legacy_hal/inc",
+                "${workspaceFolder}/simplicity_sdk/platform/common/inc",
+                "${workspaceFolder}/simplicity_sdk/platform/radio/mac",
+                "${workspaceFolder}/simplicity_sdk/util/silicon_labs/silabs_core"
+            ]
+        }
+    ],
+    "version": 4
+}
