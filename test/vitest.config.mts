@@ -13,7 +13,7 @@ export default defineConfig({
         coverage: {
             enabled: false,
             provider: "v8",
-            include: ["src/**"],
+            include: ["src/**.ts"],
             clean: true,
             cleanOnRerun: true,
             reportsDirectory: "coverage",
