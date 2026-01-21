@@ -2,9 +2,9 @@
     "targets": [
         {
             "target_name": "ezsp_ash_posix",
-            # "dependencies": [
-            #     "<!(node -p \"require('node-addon-api').targets\"):node_addon_api",
-            # ],
+            "dependencies": [
+                "<!(node -p \"require('node-addon-api').targets\"):node_addon_api",
+            ],
             "sources": [
                 "src/native/binding.cpp",
                 # SDK EZSP sources
@@ -27,7 +27,6 @@
                 "simplicity_sdk/platform/service/legacy_hal/src/crc.c",
             ],
             "include_dirs": [
-                "<!@(node -p \"require('node-addon-api').include\")",
                 # Stub headers
                 "src/native/stubs",
                 # SDK includes - add roots for relative includes
@@ -47,7 +46,6 @@
             ],
             "defines": [
                 "NAPI_VERSION=9",
-                "NAPI_DISABLE_CPP_EXCEPTIONS",
                 # SDK-specific defines
                 "EZSP_HOST",
                 "EZSP_ASH", # Use ASH protocol (not SPI or CPC)
