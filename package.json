@@ -55,7 +55,7 @@
         "@vitest/coverage-v8": "^4.0.17",
         "node-gyp": "^12.1.0",
         "prebuildify": "^6.0.1",
-        "prebuildify-cross": "^5.1.1",
+        "prebuildify-cross": "github:prebuild/prebuildify-cross#symlink-fix",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
         "vitest": "^4.0.17"
