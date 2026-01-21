@@ -97,6 +97,8 @@ jobs:
 
       - name: Build binding
         run: |
+          # prebuildify-cross uses `package.json` `files` internally to determine copying
+          jq -r '.files += ["src","simplicity_sdk"]' package.json > tmp.json && mv tmp.json package.json
           npm run apply-patches
           npm run ${{ matrix.command }} -- --target 20.17.0 ${{ matrix.args }}
           npm run revert-patches
