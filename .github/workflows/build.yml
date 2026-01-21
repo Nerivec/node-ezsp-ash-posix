@@ -98,6 +98,7 @@ jobs:
       - name: Build binding
         run: |
           npm run apply-patches
+          npx node-gyp rebuild
           npm run ${{ matrix.command }} -- --target 20.0.0 ${{ matrix.args }}
           npm run revert-patches
 
