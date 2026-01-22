@@ -19,46 +19,43 @@ jobs:
         include:
           - name: linux-x64
             os: ubuntu-latest
-            command: prebuildify-cross
-            args: -i almalinux-devtoolset11 --tag-libc --libc glibc
+            image: almalinux-devtoolset11
+            args: --tag-libc --libc glibc
 
-          # - name: linux-x64-musl
-          #   os: ubuntu-latest
-          #   command: prebuildify-cross
-          #   args: -i alpine --tag-libc --libc musl
+          - name: linux-x64-musl
+            os: ubuntu-latest
+            image: alpine
+            args: --tag-libc --libc musl
 
-          # - name: linux-arm64
-          #   os: ubuntu-latest
-          #   command: prebuildify-cross
-          #   args: -i linux-arm64 --tag-libc --libc glibc
+          - name: linux-arm64
+            os: ubuntu-latest
+            image: linux-arm64
+            args: --tag-libc --libc glibc
 
-          # - name: linux-arm64-musl
-          #   os: ubuntu-latest
-          #   command: prebuildify-cross
-          #   args: -i linux-arm64-musl --tag-libc --libc musl
+          - name: linux-arm64-musl
+            os: ubuntu-latest
+            image: linux-arm64-musl
+            args: --tag-libc --libc musl
 
-          # - name: linux-arm
-          #   os: ubuntu-latest
-          #   command: prebuildify-cross
-          #   args: -i linux-armv7 -i linux-armv6 --tag-libc --libc glibc
+          - name: linux-arm
+            os: ubuntu-latest
+            image: linux-armv7
+            args: --tag-libc --libc glibc
 
-          # - name: linux-arm-musl
-          #   os: ubuntu-latest
-          #   command: prebuildify-cross
-          #   args: -i linux-armv7l-musl --tag-libc --libc musl
+          - name: linux-arm-musl
+            os: ubuntu-latest
+            image: linux-armv7l-musl
+            args: --tag-libc --libc musl
 
-          # - name: darwin
-          #   os: macos-latest
-          #   command: prebuildify
-          #   args: --arch x64+arm64
+          - name: darwin
+            os: macos-latest
+            args: --arch x64+arm64
 
           # - name: win32-x64
           #   os: windows-latest
-          #   command: prebuildify
 
           # - name: win32-arm64
           #   os: windows-latest
-          #   command: prebuildify
           #   args: --arch arm64 --tag-armv 8
 
     name: Build ${{ matrix.name }}
@@ -96,12 +93,24 @@ jobs:
         run: npm ci
 
       - name: Build binding
+        if: |
+          !matrix.image
         run: |
-          # prebuildify-cross uses `package.json` `files` internally to determine copying
-          jq -r '.files += ["src","simplicity_sdk"]' package.json > tmp.json && mv tmp.json package.json
           npm run apply-patches
-          npm run ${{ matrix.command }} -- --target 20.17.0 ${{ matrix.args }}
+          npm run prebuildify -- --target 20.17.0 ${{ matrix.args }}
           npm run revert-patches
+
+      - name: Build binding - cross
+        if: matrix.image
+        run: |
+          docker run \
+            --rm \
+            --user $(id -u):$(id -g) \
+            -v "/var/run/docker.sock":"/var/run/docker.sock" \
+            -v ${{ github.workspace }}:/input \
+            --workdir /input \
+            ghcr.io/prebuild/${{ matrix.image }}:2 \
+            sh -c "npm run apply-patches && npm run prebuildify -- --target 20.17.0 ${{ matrix.args }} && npm run revert-patches"
 
       - uses: actions/upload-artifact@v6
         with:
