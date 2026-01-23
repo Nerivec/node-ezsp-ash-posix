@@ -1,5 +1,5 @@
 /**
- * Node.js N-API bindings for Silicon Labs EmberZNet Serial Protocol (EZSP)
+ * Node-API bindings for Silicon Labs EmberZNet Serial Protocol (EZSP)
  * and Asynchronous Serial Host (ASH) protocols of Simplicity SDK
  *
  * https://github.com/SiliconLabs/simplicity_sdk

@@ -1,7 +1,7 @@
 {
     "name": "node-ezsp-ash-posix",
     "version": "0.1.0",
-    "description": "Node.js N-API bindings for Silicon Labs EmberZNet Serial Protocol (EZSP) and Asynchronous Serial Host (ASH) protocols of Simplicity SDK",
+    "description": "Node-API bindings for Silicon Labs EmberZNet Serial Protocol (EZSP) and Asynchronous Serial Host (ASH) protocols of Simplicity SDK",
     "author": "Nerivec",
     "license": "GPL-3.0-or-later",
     "repository": {
