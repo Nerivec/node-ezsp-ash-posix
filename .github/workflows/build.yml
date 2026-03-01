@@ -112,7 +112,7 @@ jobs:
             ghcr.io/prebuild/${{ matrix.image }}:2 \
             sh -c "npm run apply-patches && npm run prebuildify -- --target 20.17.0 ${{ matrix.args }} && npm run revert-patches"
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: build-artifacts-${{ matrix.name }}
           path: prebuilds/
